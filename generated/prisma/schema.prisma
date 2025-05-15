@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+/**
+ * The generator block in Prisma schema defines how Prisma will generate the Prisma Client.
+ * Prisma Client is an auto-generated, type-safe database client that allows you to
+ * interact with your database using JavaScript or TypeScript.
+ * The client generator is responsible for generating the Prisma Client for your project.
+ * This client provides a set of methods (such as findMany, findUnique, create, update,
+ * delete, etc.) to query your database in a type-safe manner.
+ */
+
+datasource db {
+  provider = "postgresql"
+  // defines our type of database
+  url      = env("NEON_URL")
+  // database url name in env file. the prisma connect the files automatically for us
+  // we dont have to do anything to it 
+}
+
+// the prisma file was not getting recognized as I did not have prisma extension 
+// installed 
+
+model User {
+  id                  String   @id @default(cuid())
+  username            String
+  phone               String   @unique
+  email               String   @unique
+  password            String
+  role                String   @default("user")
+  isVerified          Boolean  @default(false)
+  verificationToken   String?
+  passwordResetToken  String?
+  passwordResetExpiry String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now())
+  // the way of creating database model in prisma 
+}
+
+// in prisma, if after running "npx prisma migrate dev" and seeing our migration.sql in
+// migration > prisma folder, the databse is updated in neon or whatever databse you 
+// are using, you will have to run "npx prisma migrate dev" everytime a new change is made 
+// in your User Model, and a migration.sql file will be created defining those changes.
